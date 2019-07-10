@@ -53,7 +53,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
      *
      * @throws RepositoryException
      */
-    public function resetModel() : Model
+    public function resetModel()
     {
         $this->makeModel();
     }
@@ -102,7 +102,8 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         $model = $this->model->findOrFail($id);
 
-        $model->save($attributes);
+        $model->fill($attributes);
+        $model->save();
 
         $this->resetModel();
 

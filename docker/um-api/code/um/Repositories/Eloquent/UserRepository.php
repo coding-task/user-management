@@ -2,7 +2,6 @@
 
 namespace UM\Repositories\Eloquent;
 
-
 use App\User;
 
 class UserRepository extends BaseRepository

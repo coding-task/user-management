@@ -2,9 +2,9 @@
 
 namespace UM\Repositories\Eloquent;
 
-use App\Role;
+use App\Group;
 
-class RoleRepository extends BaseRepository
+class GroupRepository extends BaseRepository
 {
     /**
      * Specify Model Class Name.
@@ -13,6 +13,6 @@ class RoleRepository extends BaseRepository
      */
     function model()
     {
-        return Role::class;
+        return Group::class;
     }
 }

@@ -14,3 +14,19 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix' => 'user'], function () use ($router) {
+    $router->get('', 'UserController@index');
+    $router->post('create', 'UserController@create');
+    $router->put('edit/{id}', 'UserController@update');
+    $router->get('/{id}', 'UserController@show');
+    $router->delete('delete/{id}', 'UserController@delete');
+});
+
+$router->group(['prefix' => 'group'], function () use ($router) {
+    $router->get('', 'GroupController@index');
+    $router->post('create', 'GroupController@create');
+    $router->put('edit/{id}', 'GroupController@update');
+    $router->get('/{id}', 'GroupController@show');
+    $router->delete('delete/{id}', 'GroupController@delete');
+});
