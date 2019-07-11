@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use UM\Repositories\Eloquent\GroupRepository;
 
 class GroupController extends Controller
@@ -28,7 +29,7 @@ class GroupController extends Controller
      */
     public function index()
     {
-        return response()->json($this->groupRepository->all(['name']));
+        return response()->json(['data' => $this->groupRepository->all(['name'])]);
     }
 
     /**
@@ -43,10 +44,10 @@ class GroupController extends Controller
     public function create(Request $request) : JsonResponse
     {
         $this->validate($request, [
-            'name' => 'required|max:30',
+            'name' => 'required|max:30|unique:groups',
         ]);
 
-        return response()->json($this->groupRepository->create($request->all()));
+        return response()->json(['data' => $this->groupRepository->create($request->all())]);
     }
 
     /**
@@ -66,7 +67,7 @@ class GroupController extends Controller
             'name' => 'required|max:30',
         ]);
 
-        return response()->json($this->groupRepository->update($request->all(), $id));
+        return response()->json(['data' => $this->groupRepository->update($request->all(), $id)]);
     }
 
     /**
@@ -80,7 +81,7 @@ class GroupController extends Controller
      */
     public function show(int $id) : JsonResponse
     {
-        return response()->json($this->groupRepository->find($id));
+        return response()->json(['data' => $this->groupRepository->find($id)]);
     }
 
     /**
@@ -88,11 +89,18 @@ class GroupController extends Controller
      *
      * @param int $id
      *
-     * @return JsonResponse
+     * @return mixed
+     *
      * @throws \App\Exceptions\RepositoryException
      */
-    public function delete(int $id) : JsonResponse
+    public function delete(int $id)
     {
-        return response()->json($this->groupRepository->delete($id));
+        if (!$this->groupRepository->userExistInGroup($id)) {
+            return response()->json(['error' => 'Group has users.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->groupRepository->delete($id);
+
+        return response('', Response::HTTP_NO_CONTENT);
     }
 }

@@ -1,6 +1,10 @@
 <?php
 
+use App\Group;
+use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +15,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call('UsersTableSeeder');
+        $this->seedAdmin();
+
+        factory(\App\User::class, 10)->create();
+        factory(\App\Group::class, 10)->create();
+    }
+
+    private function seedAdmin(): void
+    {
+        Schema::disableForeignKeyConstraints();
+        DB::table('user_groups')->truncate();
+        DB::table('groups')->truncate();
+        DB::table('users')->truncate();
+
+
+        $role = Group::create(['name' => 'admin']);
+        $user = User::create(['email' => 'admin@admin.com', 'password' => 'password@123', 'name' => 'Administrator']);
+
+        $user->group()->sync($role->id);
+
+        Schema::enableForeignKeyConstraints();
+        return;
     }
 }

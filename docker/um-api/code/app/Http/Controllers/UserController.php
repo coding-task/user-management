@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use UM\Repositories\Eloquent\UserRepository;
 
 class UserController extends Controller
@@ -28,7 +29,7 @@ class UserController extends Controller
      */
     public function index()
     {
-       return response()->json($this->userRepository->all(['email', 'name']));
+       return response()->json(['data' => $this->userRepository->all(['email', 'name'])]);
     }
 
     /**
@@ -43,12 +44,12 @@ class UserController extends Controller
     public function create(Request $request) : JsonResponse
     {
         $this->validate($request, [
-            'email' => 'required|email',
-            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'name' => 'required|max:60',
             'password' => 'required'
         ]);
 
-        return response()->json($this->userRepository->create($request->all()));
+        return response()->json(['data' => $this->userRepository->create($request->all())]);
     }
 
     /**
@@ -70,7 +71,7 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
-        return response()->json($this->userRepository->update($request->all(), $id));
+        return response()->json(['data' => $this->userRepository->update($request->all(), $id)]);
     }
 
     /**
@@ -84,7 +85,7 @@ class UserController extends Controller
      */
     public function show(int $id) : JsonResponse
     {
-        return response()->json($this->userRepository->find($id));
+        return response()->json(['data' => $this->userRepository->find($id)]);
     }
 
     /**
@@ -92,11 +93,63 @@ class UserController extends Controller
      *
      * @param int $id
      *
-     * @return JsonResponse
+     * @return Response
      * @throws \App\Exceptions\RepositoryException
      */
-    public function delete(int $id) : JsonResponse
+    public function delete(int $id)
     {
-        return response()->json($this->userRepository->delete($id));
+        if ($this->userRepository->isAdmin($id)) {
+            return response()->json(['error' => 'Cannot Remove Admin User.']);
+        }
+
+        $this->userRepository->delete($id);
+
+        return response('', Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Assign User to Group.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     * @throws \App\Exceptions\RepositoryException
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function assignUserToGroup(Request $request) : Response
+    {
+        $this->validate($request, [
+            'user_id' => 'required|int',
+            'group_id' => 'required|int',
+        ]);
+
+        $this->userRepository->attach($request->get('user_id'), $request->get('group_id'));
+
+        return response('', Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Remove User From Group.
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     * @throws \App\Exceptions\RepositoryException
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function removeUserFromGroup(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required|int',
+            'group_id' => 'required|int',
+        ]);
+
+        if ($this->userRepository->isAdmin($request->get('user_id'))) {
+            return response()->json(['error' => 'Cannot Remove Admin User.']);
+        }
+
+        $this->userRepository->detach($request->get('user_id'),  $request->get('group_id'));
+
+        return response('', Response::HTTP_NO_CONTENT);
     }
 }
