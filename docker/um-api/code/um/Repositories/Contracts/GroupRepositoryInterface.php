@@ -2,7 +2,7 @@
 
 namespace UM\Repositories\Contracts;
 
-interface GroupRepositoryInterface
+interface GroupRepositoryInterface extends BaseRepositoryInterface
 {
     /**
      * Check If User Exist in Group.
