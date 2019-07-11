@@ -45,6 +45,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        $handler = app('api.exception');
+
+        $handler->setErrorFormat([
+            'errors' => ':errors',
+            'code' => ':code',
+            'debug' => ':debug',
+        ]);
+
+        return $handler->render($request, $exception);
     }
 }

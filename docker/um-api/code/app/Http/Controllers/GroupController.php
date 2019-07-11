@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Validators\GroupValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,14 +13,19 @@ class GroupController extends Controller
     /** @var GroupRepositoryInterface */
     private $groupRepository;
 
+    /** @var GroupValidator */
+    private $validator;
+
     /**
      * GroupController constructor.
      *
      * @param GroupRepositoryInterface $groupRepository
+     * @param GroupValidator $groupValidator
      */
-    public function __construct(GroupRepositoryInterface $groupRepository)
+    public function __construct(GroupRepositoryInterface $groupRepository, GroupValidator $groupValidator)
     {
         $this->groupRepository = $groupRepository;
+        $this->validator       = $groupValidator;
     }
 
     /**
@@ -29,7 +35,7 @@ class GroupController extends Controller
      */
     public function index()
     {
-        return response()->json(['data' => $this->groupRepository->all(['name'])]);
+        return response()->json(['data' => $this->groupRepository->all(['id', 'name'])]);
     }
 
     /**
@@ -38,13 +44,10 @@ class GroupController extends Controller
      * @param Request $request
      *
      * @return JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function create(Request $request) : JsonResponse
     {
-        $this->validate($request, [
-            'name' => 'required|max:30|unique:groups',
-        ]);
+        $this->validator->validateCreate($request->all());
 
         return response()->json(['data' => $this->groupRepository->create($request->all())]);
     }
@@ -56,14 +59,10 @@ class GroupController extends Controller
      * @param Request $request
      *
      * @return JsonResponse
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(int $id, Request $request) : JsonResponse
     {
-        $this->validate($request, [
-            'name' => 'required|max:30',
-        ]);
+        $this->validator->validateUpdate($request->all(), $id);
 
         return response()->json(['data' => $this->groupRepository->update($request->all(), $id)]);
     }
@@ -88,7 +87,6 @@ class GroupController extends Controller
      *
      * @return mixed
      *
-     * @throws \App\Exceptions\RepositoryException
      */
     public function delete(int $id)
     {

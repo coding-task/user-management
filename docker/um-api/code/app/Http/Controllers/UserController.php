@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Validators\UserValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,14 +13,19 @@ class UserController extends Controller
     /** @var UserRepositoryInterface  */
     private $userRepository;
 
+    /** @var UserValidator */
+    private $validator;
+
     /**
      * UserController constructor.
      *
-     * @param $userRepository
+     * @param UserRepositoryInterface $userRepository
+     * @param UserValidator $userValidator
      */
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(UserRepositoryInterface $userRepository, UserValidator $userValidator)
     {
         $this->userRepository = $userRepository;
+        $this->validator      = $userValidator;
     }
 
     /**
@@ -29,7 +35,7 @@ class UserController extends Controller
      */
     public function index()
     {
-       return response()->json(['data' => $this->userRepository->all(['email', 'name'])]);
+       return response()->json(['data' => $this->userRepository->all(['id', 'email', 'name'])]);
     }
 
     /**
@@ -38,15 +44,10 @@ class UserController extends Controller
      * @param Request $request
      *
      * @return JsonResponse
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function create(Request $request) : JsonResponse
     {
-        $this->validate($request, [
-            'email' => 'required|email|unique:users',
-            'name' => 'required|max:60',
-            'password' => 'required'
-        ]);
+        $this->validator->validateCreate($request->all());
 
         return response()->json(['data' => $this->userRepository->create($request->all())]);
     }
@@ -59,15 +60,10 @@ class UserController extends Controller
      *
      * @return JsonResponse
      *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(int $id, Request $request) : JsonResponse
     {
-        $this->validate($request, [
-            'email' => 'required|email',
-            'name' => 'required',
-            'password' => 'required',
-        ]);
+        $this->validator->validateUpdate($request->all(), $id);
 
         return response()->json(['data' => $this->userRepository->update($request->all(), $id)]);
     }
@@ -108,14 +104,10 @@ class UserController extends Controller
      * @param Request $request
      *
      * @return Response
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function assignUserToGroup(Request $request) : Response
     {
-        $this->validate($request, [
-            'user_id' => 'required|int',
-            'group_id' => 'required|int',
-        ]);
+        $this->validator->validateUserGroup($request->all());
 
         $this->userRepository->attach($request->get('user_id'), $request->get('group_id'));
 
@@ -128,17 +120,18 @@ class UserController extends Controller
      * @param Request $request
      *
      * @return mixed
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function removeUserFromGroup(Request $request)
     {
-        $this->validate($request, [
-            'user_id' => 'required|int',
-            'group_id' => 'required|int',
-        ]);
+        $this->validator->validateUserGroup($request->all());
 
         if ($this->userRepository->isAdmin($request->get('user_id'))) {
-            return response()->json(['error' => 'Cannot Remove Admin User.']);
+            return response()->json(
+                [
+                    'errors' => 'Cannot Remove Admin User.'
+                ],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
         }
 
         $this->userRepository->detach($request->get('user_id'),  $request->get('group_id'));
