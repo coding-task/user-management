@@ -3,8 +3,9 @@
 namespace UM\Repositories\Eloquent;
 
 use App\Group;
+use UM\Repositories\Contracts\GroupRepositoryInterface;
 
-class GroupRepository extends BaseRepository
+class GroupRepository extends BaseRepository implements GroupRepositoryInterface
 {
     /**
      * Specify Model Class Name.

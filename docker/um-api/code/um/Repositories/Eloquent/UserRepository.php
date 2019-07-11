@@ -4,8 +4,9 @@ namespace UM\Repositories\Eloquent;
 
 use App\Group;
 use App\User;
+use UM\Repositories\Contracts\UserRepositoryInterface;
 
-class UserRepository extends BaseRepository
+class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
     /**
      * Specify Model Class Name.
@@ -22,8 +23,8 @@ class UserRepository extends BaseRepository
      *
      * @param int $userId
      * @param int $groupId
-     * @return mixed
      *
+     * @return mixed
      * @throws \App\Exceptions\RepositoryException
      */
     public function detach(int $userId, int $groupId)

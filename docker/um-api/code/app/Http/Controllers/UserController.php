@@ -5,19 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use UM\Repositories\Eloquent\UserRepository;
+use UM\Repositories\Contracts\UserRepositoryInterface;
 
 class UserController extends Controller
 {
-    /** @var UserRepository */
+    /** @var UserRepositoryInterface  */
     private $userRepository;
 
     /**
      * UserController constructor.
      *
-     * @param UserRepository $userRepository
+     * @param $userRepository
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;
     }
@@ -38,7 +38,6 @@ class UserController extends Controller
      * @param Request $request
      *
      * @return JsonResponse
-     * @throws \App\Exceptions\RepositoryException
      * @throws \Illuminate\Validation\ValidationException
      */
     public function create(Request $request) : JsonResponse
@@ -60,7 +59,6 @@ class UserController extends Controller
      *
      * @return JsonResponse
      *
-     * @throws \App\Exceptions\RepositoryException
      * @throws \Illuminate\Validation\ValidationException
      */
     public function update(int $id, Request $request) : JsonResponse
@@ -80,8 +78,6 @@ class UserController extends Controller
      * @param int $id
      *
      * @return JsonResponse
-     *
-     * @throws \App\Exceptions\RepositoryException
      */
     public function show(int $id) : JsonResponse
     {
@@ -94,7 +90,6 @@ class UserController extends Controller
      * @param int $id
      *
      * @return Response
-     * @throws \App\Exceptions\RepositoryException
      */
     public function delete(int $id)
     {
@@ -113,7 +108,6 @@ class UserController extends Controller
      * @param Request $request
      *
      * @return Response
-     * @throws \App\Exceptions\RepositoryException
      * @throws \Illuminate\Validation\ValidationException
      */
     public function assignUserToGroup(Request $request) : Response
@@ -134,7 +128,6 @@ class UserController extends Controller
      * @param Request $request
      *
      * @return mixed
-     * @throws \App\Exceptions\RepositoryException
      * @throws \Illuminate\Validation\ValidationException
      */
     public function removeUserFromGroup(Request $request)

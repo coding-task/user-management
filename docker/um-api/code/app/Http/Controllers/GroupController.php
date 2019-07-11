@@ -5,19 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use UM\Repositories\Eloquent\GroupRepository;
+use UM\Repositories\Contracts\GroupRepositoryInterface;
 
 class GroupController extends Controller
 {
-    /** @var GroupRepository */
+    /** @var GroupRepositoryInterface */
     private $groupRepository;
 
     /**
      * GroupController constructor.
      *
-     * @param GroupRepository $groupRepository
+     * @param GroupRepositoryInterface $groupRepository
      */
-    public function __construct(GroupRepository $groupRepository)
+    public function __construct(GroupRepositoryInterface $groupRepository)
     {
         $this->groupRepository = $groupRepository;
     }
@@ -38,7 +38,6 @@ class GroupController extends Controller
      * @param Request $request
      *
      * @return JsonResponse
-     * @throws \App\Exceptions\RepositoryException
      * @throws \Illuminate\Validation\ValidationException
      */
     public function create(Request $request) : JsonResponse
@@ -58,7 +57,6 @@ class GroupController extends Controller
      *
      * @return JsonResponse
      *
-     * @throws \App\Exceptions\RepositoryException
      * @throws \Illuminate\Validation\ValidationException
      */
     public function update(int $id, Request $request) : JsonResponse
@@ -77,7 +75,6 @@ class GroupController extends Controller
      *
      * @return JsonResponse
      *
-     * @throws \App\Exceptions\RepositoryException
      */
     public function show(int $id) : JsonResponse
     {
