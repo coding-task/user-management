@@ -58,6 +58,7 @@ class GroupController extends Controller
      *}
      *]
      *}
+     *
      * @return JsonResponse
      */
     public function index()

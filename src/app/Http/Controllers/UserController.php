@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use UM\Repositories\Contracts\UserRepositoryInterface;
 
+/**
+ * Class UserController
+ *
+ * @group User Management
+ */
 class UserController extends Controller
 {
     /** @var UserRepositoryInterface  */
@@ -32,6 +37,27 @@ class UserController extends Controller
     /**
      * User Index.
      *
+     * @authenticated
+     * @response 200
+     * {
+     *"data": [
+     *{
+    "id": 1,
+    "name": "super_admin",
+     "email": "superadmin@admin.com"
+     *},
+     *{
+    "id": 2,
+    "name": "customer",
+    "email": "customer@mail.com"
+     *},
+     *{
+    "id": 3,
+    "name": "user",
+    "email": "user@mail.com"
+     *}
+     *]
+     *}
      * @return JsonResponse
      */
     public function index()
@@ -43,6 +69,27 @@ class UserController extends Controller
      * Create User.
      *
      * @param Request $request
+     * @bodyparam email string required User email
+     * @bodyParam name string required User Name
+     * @bodyParam password string required User Password
+     * @response
+     * {
+     *"data": {
+     *"name": "Ramesh Sharma",
+     *"email": "ssss@gmail.com",
+     *"updated_at": "2019-07-13 19:10:24",
+     *"created_at": "2019-07-13 19:10:24",
+     *"id": 13
+     *}
+     *}
+     * @response 422
+     * {
+     *"errors": {
+     *"email": [
+     *"The email field is required."
+     *]
+     *}
+     *}
      *
      * @return JsonResponse
      */
@@ -61,6 +108,20 @@ class UserController extends Controller
      *
      * @param int $id
      * @param Request $request
+     * @authenticated
+     * @bodyparam email string required User email
+     * @bodyParam name string required User Name
+     * @bodyParam password string required User Password
+     * @queryParam id User Id
+     * @response 204
+     * @response 422
+     * {
+     *"errors": {
+     *"email": [
+     *"The email field is required."
+     *]
+     *}
+     *}
      *
      * @return JsonResponse
      *
@@ -78,6 +139,19 @@ class UserController extends Controller
      * Show User.
      *
      * @param int $id
+     * @authenticated
+     * @queryParam id int User Id
+     * @response
+     * {
+     *"data": {
+     *"name": "Ramesh Sharma",
+     *"email": "ssss@gmail.com",
+     *"updated_at": "2019-07-13 19:10:24",
+     *"created_at": "2019-07-13 19:10:24",
+     *"id": 13
+     *}
+     *}
+     * @response 404
      *
      * @return JsonResponse
      */
@@ -90,6 +164,17 @@ class UserController extends Controller
      * Delete User.
      *
      * @param int $id
+     * @authenticated
+     * @queryParam id User Id
+     * @response 201
+     * @response 422
+     * {
+     *"errors": {
+     *"app_error": [
+     * "Cannot delete Super Admin"
+     *]
+     *}
+     *}
      *
      * @return Response
      */
@@ -113,6 +198,11 @@ class UserController extends Controller
      *
      * @param Request $request
      *
+     * @authenticated
+     * @bodyParam user_id int required User Id
+     * @bodyParam group int required Group Id
+     * @response 204
+     *
      * @return Response
      */
     public function assignUserToGroup(Request $request) : Response
@@ -128,6 +218,19 @@ class UserController extends Controller
      * Remove User From Group.
      *
      * @param Request $request
+     *
+     * @authenticated
+     * @bodyParam user_id int required User Id
+     * @bodyParam group int required Group Id
+     * @response 204
+     * @response 422
+     * {
+     *"errors": {
+     *"app_error": [
+     * "Cannot Remove Super Admin."
+     *]
+     *}
+     *}
      *
      * @return mixed
      */
