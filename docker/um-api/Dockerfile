@@ -17,6 +17,7 @@ RUN apt-get update && apt-get -y upgrade && \
                             php7.2-mbstring \
                             php7.2-zip \
                             php7.2-xml \
+                            php7.2-sqlite \
                             php7.2-curl && \
                             apt-get clean
 
