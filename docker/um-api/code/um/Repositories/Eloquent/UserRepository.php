@@ -62,7 +62,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     {
         $user = $this->find($userId);
 
-        return $user->group()->where('name', '=',Group::SUPER_ADMIN)->exists();
+        return $user->group()->where('name', '=', Group::SUPER_ADMIN)->exists();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\ResourceException;
+use App\Group;
 use App\Validators\GroupValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -67,6 +68,16 @@ class GroupController extends Controller
     public function update(int $id, Request $request) : JsonResponse
     {
         $this->validator->validateUpdate($request->all(), $id);
+
+        $role = $this->groupRepository->find($id);
+
+        if ($role->name === Group::SUPER_ADMIN) {
+            throw new ResourceException(
+                null,
+                ['app_error' => 'Cannot Update Super Admin.'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
 
         $this->groupRepository->update($request->all(), $id);
 
