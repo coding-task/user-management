@@ -210,16 +210,7 @@ class ApiHandler implements IlluminateExceptionHandler
      */
     protected function prepareReplacements(Exception $exception)
     {
-        $statusCode = $this->getStatusCode($exception);
-
-        if ( ! $message = $exception->getMessage()) {
-            $message = sprintf('%d %s', $statusCode, Response::$statusTexts[$statusCode]);
-        }
-
-        $replacements = [
-            ':message' => $message,
-            ':status_code' => $statusCode,
-        ];
+        $replacements = [];
 
         if ($exception instanceof ResourceException && $exception->hasErrors()) {
             $replacements[':errors'] = $exception->getErrors();
