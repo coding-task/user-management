@@ -1,7 +1,7 @@
 version: "2"
 services:
   um-api:
-    build: docker/um-api
+    build: ./um-api
     container_name: "um-api"
     ports:
       - "8081:80"
@@ -14,12 +14,13 @@ services:
       DB_PASSWORD: "root"
       DB_HOST: "um-mysql"
     volumes:
-      - ./docker/um-api/code:/var/www
+      - ../src:/var/www
 
   um-mysql:
     image: "mysql:5.7"
     container_name: "um-mysql"
     environment:
       MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "um_db"
     volumes:
-      - .data/mysql:/var/lib/mysql
+      - ../.data:/var/lib/mysql

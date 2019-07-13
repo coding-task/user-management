@@ -1,4 +1,4 @@
-From ubuntu:18.04
+FROM ubuntu:18.04
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get -y upgrade && \
@@ -34,4 +34,7 @@ ADD conf/supervisord.conf /etc/supervisord.conf
 RUN mkdir /var/run/php
 RUN useradd -u 1000 1000
 
-ENTRYPOINT ["/usr/bin/supervisord", "-n", "-c",  "/etc/supervisord.conf"]
+COPY ./entrypoint.sh /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/bin/entrypoint.sh"]
