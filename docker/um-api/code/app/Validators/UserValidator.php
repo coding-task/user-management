@@ -18,7 +18,7 @@ class UserValidator extends AbstractValidator
         $this->validate($user, [
             'email' => 'required|email|unique:users,email,'. $id,
             'name' => 'required',
-            'password' => 'required',
+            'password' => 'required|sometimes',
         ]);
     }
 

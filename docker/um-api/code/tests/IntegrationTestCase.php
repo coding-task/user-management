@@ -16,6 +16,7 @@ class IntegrationTestCase extends TestCase
         parent::setUp();
 
         $this->runDatabaseMigrations();
+
         $this->artisan('db:seed');
     }
 
@@ -38,7 +39,7 @@ class IntegrationTestCase extends TestCase
      */
     public function getAdminUser()
     {
-        $admin = $this->post($this->baseUrl . '/users/authenticate', [
+        $admin = $this->post($this->baseUrl . '/user/authenticate', [
             'email' => 'superadmin@admin.com',
             'password' => 'password@123',
         ]);

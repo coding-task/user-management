@@ -97,8 +97,8 @@ class UserController extends Controller
         if ($this->userRepository->isAdmin($id)) {
             throw new ResourceException(
                 null,
-                ['app_error' => 'Cannot Delete Super Admin.'],
-                Response::HTTP_INTERNAL_SERVER_ERROR
+                ['app_error' => 'Cannot delete Super Admin.'],
+                Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
 
@@ -138,7 +138,7 @@ class UserController extends Controller
             throw new ResourceException(
                 null,
                 ['app_error' => 'Cannot Remove Super Admin.'],
-                Response::HTTP_INTERNAL_SERVER_ERROR
+                Response::HTTP_UNPROCESSABLE_ENTITY
                 );
         }
 
