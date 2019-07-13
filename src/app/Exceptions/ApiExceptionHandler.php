@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Illuminate\Contracts\Debug\ExceptionHandler as IlluminateExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ApiHandler implements IlluminateExceptionHandler
+class ApiExceptionHandler implements IlluminateExceptionHandler
 {
     /**
      * Array of exception handlers.

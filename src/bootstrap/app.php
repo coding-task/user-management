@@ -36,7 +36,7 @@ $app = new Laravel\Lumen\Application(
 */
 
 $app->singleton('api.exception', function ($app) {
-    return new App\Exceptions\ApiHandler(
+    return new App\Exceptions\ApiExceptionHandler(
         $app['Illuminate\Contracts\Debug\ExceptionHandler'],
         [
             'errors' => ':errors',
