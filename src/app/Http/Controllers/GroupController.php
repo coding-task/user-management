@@ -51,8 +51,8 @@ class GroupController extends Controller
     {
         $this->validator->validateCreate($request->all());
 
-        return response()->json([
-            'data' => $this->groupRepository->create($request->all())],
+        return response()->json(
+            ['data' => $this->groupRepository->create($request->all())],
             Response::HTTP_CREATED
         );
     }
@@ -107,7 +107,7 @@ class GroupController extends Controller
      */
     public function delete(int $id)
     {
-        if (!$this->groupRepository->userExistInGroup($id)) {
+        if ( ! $this->groupRepository->userExistInGroup($id)) {
             throw new ResourceException(
                 null,
                 ['app_error' => 'Cannot Delete Group. Group has Users.'],

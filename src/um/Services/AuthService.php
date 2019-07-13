@@ -55,6 +55,7 @@ class AuthService
         throw new ResourceException(
             null,
             ['auth' => 'Wrong credentials.'],
-            Response::HTTP_BAD_REQUEST);
+            Response::HTTP_BAD_REQUEST
+        );
     }
 }

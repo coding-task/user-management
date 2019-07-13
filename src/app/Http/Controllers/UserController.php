@@ -36,7 +36,7 @@ class UserController extends Controller
      */
     public function index()
     {
-       return response()->json(['data' => $this->userRepository->all(['id', 'email', 'name'])]);
+        return response()->json(['data' => $this->userRepository->all(['id', 'email', 'name'])]);
     }
 
     /**
@@ -50,9 +50,10 @@ class UserController extends Controller
     {
         $this->validator->validateCreate($request->all());
 
-        return response()->json([
-            'data' => $this->userRepository->create($request->all()),
-        ], Response::HTTP_CREATED);
+        return response()->json(
+            ['data' => $this->userRepository->create($request->all())],
+            Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -70,7 +71,7 @@ class UserController extends Controller
 
         $this->userRepository->update($request->all(), $id);
 
-        return response()->json(null,Response::HTTP_NO_CONTENT);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -142,7 +143,7 @@ class UserController extends Controller
                 );
         }
 
-        $this->userRepository->detach($request->get('user_id'),  $request->get('group_id'));
+        $this->userRepository->detach($request->get('user_id'), $request->get('group_id'));
 
         return response(null, Response::HTTP_NO_CONTENT);
     }

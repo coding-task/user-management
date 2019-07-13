@@ -39,7 +39,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         $model = $this->app->make($this->model());
 
-        if (!$model instanceof Model) {
+        if ( ! $model instanceof Model) {
             throw new RepositoryException(
                 sprintf("Class %s must be an instance of Illuminate\Database\Eloquent\Model", $this->model)
             );
@@ -150,5 +150,5 @@ abstract class BaseRepository implements BaseRepositoryInterface
      *
      * @return string
      */
-    abstract function model();
+    abstract public function model();
 }

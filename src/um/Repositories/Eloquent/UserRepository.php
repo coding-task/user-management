@@ -13,9 +13,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      *
      * @return string
      */
-    function model() : string
+    public function model() : string
     {
-       return User::class;
+        return User::class;
     }
 
     /**

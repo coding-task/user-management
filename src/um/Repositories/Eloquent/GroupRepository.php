@@ -12,7 +12,7 @@ class GroupRepository extends BaseRepository implements GroupRepositoryInterface
      *
      * @return string
      */
-    function model()
+    public function model()
     {
         return Group::class;
     }

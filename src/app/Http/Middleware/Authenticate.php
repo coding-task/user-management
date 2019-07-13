@@ -46,7 +46,8 @@ class Authenticate
             throw new ResourceException(
                 null,
                 ['auth' => 'Invalid token.'],
-                Response::HTTP_BAD_REQUEST);
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
         try {

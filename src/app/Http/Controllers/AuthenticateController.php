@@ -36,5 +36,4 @@ class AuthenticateController extends Controller
 
         return $this->authService->authenticate($credentials);
     }
-
 }
