@@ -14,7 +14,7 @@ class AuthenticateControllerTest extends IntegrationTestCase
      */
     public function it_throws_validation_exception_for_invalid_request()
     {
-        $user = $this->post('/users/authenticate', [
+        $user = $this->post('/user/authenticate', [
             'email' => 'superadmin@admin.com',
         ]);
 
@@ -36,12 +36,38 @@ class AuthenticateControllerTest extends IntegrationTestCase
      */
     public function it_fails_authentication_for_invalid_user()
     {
-        $this->post('/users/authenticate', [
+        $this->post('/user/authenticate', [
             'email' => 'invalid@invalid.com',
             'password' => 'invalid',
         ]);
-        $this->assertResponseStatus(500);
+
+        $this->assertResponseStatus(404);
     }
+
+    /**
+     * @test
+     */
+    public function it_fails_authentication_for_invalid_email()
+    {
+        $user = $this->post('/user/authenticate', [
+            'email' => 'superadmin@admin.com',
+            'password' => 'invalid',
+        ]);
+
+        $this->assertResponseStatus(400);
+
+        $response = json_decode($user->response->getContent(), true);
+
+        $this->assertEquals([
+            'errors' => [
+                'auth' => [
+                    'Wrong credentials.',
+                ],
+            ],
+        ], $response);
+    }
+
+
     /**
      * @test
      *
@@ -49,12 +75,15 @@ class AuthenticateControllerTest extends IntegrationTestCase
      */
     public function it_authenticates_user()
     {
-        $user = $this->post('/users/authenticate', [
+        $user = $this->post('/user/authenticate', [
             'email' => 'superadmin@admin.com',
             'password' => 'password@123',
         ]);
+
         $response = json_decode($user->response->getContent(), true);
+
         $this->assertResponseOk();
+
         $this->assertNotEmpty($response['data']['token']);
     }
 }
