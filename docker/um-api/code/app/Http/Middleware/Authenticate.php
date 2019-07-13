@@ -44,7 +44,7 @@ class Authenticate
 
         if ( ! $token) {
             throw new ResourceException(
-                ResourceException::AUTH_ERROR_CODE,
+                null,
                 ['auth' => 'Invalid token.'],
                 Response::HTTP_BAD_REQUEST);
         }
@@ -53,13 +53,13 @@ class Authenticate
             $credentials = $this->jwt->decode($token, env('JWT_ENCRYPT_KEY'), ['HS256']);
         } catch (ExpiredException $e) {
             throw new ResourceException(
-                ResourceException::AUTH_ERROR_CODE,
+                null,
                 ['auth' => 'Token expired.'],
                 Response::HTTP_BAD_REQUEST
             );
         } catch (Exception $e) {
             throw new ResourceException(
-                ResourceException::AUTH_ERROR_CODE,
+                null,
                 ['auth' => 'Cannot decode token.'],
                 Response::HTTP_BAD_REQUEST
             );
@@ -70,7 +70,7 @@ class Authenticate
 
         if ( ! in_array($role->name, $roles)) {
             throw new ResourceException(
-                ResourceException::AUTH_ERROR_CODE,
+                null,
                 ['auth' => 'Unauthorized.'],
                 Response::HTTP_UNAUTHORIZED
             );

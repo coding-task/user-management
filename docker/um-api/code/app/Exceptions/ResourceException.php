@@ -9,9 +9,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ResourceException extends HttpException
 {
-    /** @var string */
-    const AUTH_ERROR_CODE = 'auth_error';
-
     /**
      * MessageBag errors.
      *

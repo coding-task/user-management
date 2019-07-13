@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ResourceException;
 use App\Validators\GroupValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -49,7 +50,10 @@ class GroupController extends Controller
     {
         $this->validator->validateCreate($request->all());
 
-        return response()->json(['data' => $this->groupRepository->create($request->all())]);
+        return response()->json([
+            'data' => $this->groupRepository->create($request->all())],
+            Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -64,7 +68,9 @@ class GroupController extends Controller
     {
         $this->validator->validateUpdate($request->all(), $id);
 
-        return response()->json(['data' => $this->groupRepository->update($request->all(), $id)]);
+        $this->groupRepository->update($request->all(), $id);
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -91,11 +97,15 @@ class GroupController extends Controller
     public function delete(int $id)
     {
         if (!$this->groupRepository->userExistInGroup($id)) {
-            return response()->json(['error' => 'Group has users.'], Response::HTTP_UNPROCESSABLE_ENTITY);
+            throw new ResourceException(
+                null,
+                ['app_error' => 'Cannot Delete Group. Group has Users.'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
         $this->groupRepository->delete($id);
 
-        return response('', Response::HTTP_NO_CONTENT);
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }

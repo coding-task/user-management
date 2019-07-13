@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ResourceException;
 use App\Validators\UserValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -49,7 +50,9 @@ class UserController extends Controller
     {
         $this->validator->validateCreate($request->all());
 
-        return response()->json(['data' => $this->userRepository->create($request->all())]);
+        return response()->json([
+            'data' => $this->userRepository->create($request->all()),
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -65,7 +68,9 @@ class UserController extends Controller
     {
         $this->validator->validateUpdate($request->all(), $id);
 
-        return response()->json(['data' => $this->userRepository->update($request->all(), $id)]);
+        $this->userRepository->update($request->all(), $id);
+
+        return response()->json(null,Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -90,12 +95,16 @@ class UserController extends Controller
     public function delete(int $id)
     {
         if ($this->userRepository->isAdmin($id)) {
-            return response()->json(['error' => 'Cannot Remove Admin User.']);
+            throw new ResourceException(
+                null,
+                ['app_error' => 'Cannot Delete Super Admin.'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
         $this->userRepository->delete($id);
 
-        return response('', Response::HTTP_NO_CONTENT);
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -111,7 +120,7 @@ class UserController extends Controller
 
         $this->userRepository->attach($request->get('user_id'), $request->get('group_id'));
 
-        return response('', Response::HTTP_NO_CONTENT);
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -126,16 +135,15 @@ class UserController extends Controller
         $this->validator->validateUserGroup($request->all());
 
         if ($this->userRepository->isAdmin($request->get('user_id'))) {
-            return response()->json(
-                [
-                    'errors' => 'Cannot Remove Admin User.'
-                ],
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            throw new ResourceException(
+                null,
+                ['app_error' => 'Cannot Remove Super Admin.'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+                );
         }
 
         $this->userRepository->detach($request->get('user_id'),  $request->get('group_id'));
 
-        return response('', Response::HTTP_NO_CONTENT);
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }
