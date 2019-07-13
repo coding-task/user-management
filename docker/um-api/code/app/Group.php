@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Group extends Model
 {
-    const ADMIN = 'admin';
+    const SUPER_ADMIN = 'super_admin';
 
     protected $fillable = [
         'name'

@@ -3,41 +3,80 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
+use Exception;
+use Firebase\JWT\JWT;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Firebase\JWT\ExpiredException;
+use App\Exceptions\ResourceException;
+use UM\Repositories\Contracts\UserRepositoryInterface;
 
 class Authenticate
 {
-    /**
-     * The authentication guard factory instance.
-     *
-     * @var \Illuminate\Contracts\Auth\Factory
-     */
-    protected $auth;
+    /** @var UserRepositoryInterface */
+    protected $userRepository;
+
+    /** @var JWT */
+    protected $jwt;
 
     /**
-     * Create a new middleware instance.
+     * JwtMiddleware constructor.
      *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
-     * @return void
+     * @param UserRepositoryInterface $userRepository
+     * @param JWT $jwt
      */
-    public function __construct(Auth $auth)
+    public function __construct(UserRepositoryInterface $userRepository, JWT $jwt)
     {
-        $this->auth = $auth;
+        $this->userRepository = $userRepository;
+        $this->jwt  = $jwt;
     }
 
     /**
-     * Handle an incoming request.
+     * @param Request $request
+     * @param Closure $next
+     * @param array   $roles
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+        $token = $request->header('token');
+
+        if ( ! $token) {
+            throw new ResourceException(
+                ResourceException::AUTH_ERROR_CODE,
+                ['auth' => 'Invalid token.'],
+                Response::HTTP_BAD_REQUEST);
         }
+
+        try {
+            $credentials = $this->jwt->decode($token, env('JWT_ENCRYPT_KEY'), ['HS256']);
+        } catch (ExpiredException $e) {
+            throw new ResourceException(
+                ResourceException::AUTH_ERROR_CODE,
+                ['auth' => 'Token expired.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        } catch (Exception $e) {
+            throw new ResourceException(
+                ResourceException::AUTH_ERROR_CODE,
+                ['auth' => 'Cannot decode token.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
+        $user = $this->userRepository->find($credentials->subject);
+        $role = $user->group->first();
+
+        if ( ! in_array($role->name, $roles)) {
+            throw new ResourceException(
+                ResourceException::AUTH_ERROR_CODE,
+                ['auth' => 'Unauthorized.'],
+                Response::HTTP_UNAUTHORIZED
+            );
+        }
+
+        $request->user = $user;
 
         return $next($request);
     }

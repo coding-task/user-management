@@ -29,8 +29,14 @@ class DatabaseSeeder extends Seeder
         DB::table('users')->truncate();
 
 
-        $role = Group::create(['name' => 'admin']);
-        $user = User::create(['email' => 'admin@admin.com', 'password' => 'password@123', 'name' => 'Administrator']);
+        $role = Group::create(['name' => 'super_admin']);
+        $user = User::create(
+            [
+                'email' => 'superadmin@admin.com',
+                'password' => 'password@123',
+                'name' => 'Administrator'
+            ]
+        );
 
         $user->group()->sync($role->id);
 

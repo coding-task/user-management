@@ -49,7 +49,6 @@ class Handler extends ExceptionHandler
 
         $handler->setErrorFormat([
             'errors' => ':errors',
-            'code' => ':code',
             'debug' => ':debug',
         ]);
 

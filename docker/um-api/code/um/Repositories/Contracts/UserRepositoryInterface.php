@@ -32,4 +32,14 @@ interface UserRepositoryInterface extends BaseRepositoryInterface
      * @return bool
      */
     public function isAdmin(int $userId) : bool;
+
+    /**
+     * Find By Field.
+     *
+     * @param string $field
+     * @param string $value
+     *
+     * @return mixed
+     */
+    public function findByField(string $field, string $value);
 }

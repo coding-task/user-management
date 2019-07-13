@@ -62,6 +62,24 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
     {
         $user = $this->find($userId);
 
-        return $user->group()->where('name', '=',Group::ADMIN)->exists();
+        return $user->group()->where('name', '=',Group::SUPER_ADMIN)->exists();
+    }
+
+    /**
+     * Find By Field.
+     *
+     * @param string $field
+     * @param string $value
+     *
+     * @return mixed
+     * @throws \App\Exceptions\RepositoryException
+     */
+    public function findByField(string $field, string $value)
+    {
+        $model = $this->model->where($field, '=', $value)->firstOrFail();
+
+        $this->resetModel();
+
+        return $model;
     }
 }
