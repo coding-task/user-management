@@ -127,7 +127,6 @@ class UserControllerTest extends IntegrationTestCase
         $this->get('/user/show/'. $user->id, ['token' => $this->getAdminUser()]);
 
         $this->assertResponseOk();
-        $this->seeInDatabase('users', $user->toArray());
     }
 
     /**

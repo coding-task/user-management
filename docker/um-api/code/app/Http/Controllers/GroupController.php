@@ -75,7 +75,7 @@ class GroupController extends Controller
             throw new ResourceException(
                 null,
                 ['app_error' => 'Cannot Update Super Admin.'],
-                Response::HTTP_INTERNAL_SERVER_ERROR
+                Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
 
@@ -111,7 +111,7 @@ class GroupController extends Controller
             throw new ResourceException(
                 null,
                 ['app_error' => 'Cannot Delete Group. Group has Users.'],
-                Response::HTTP_INTERNAL_SERVER_ERROR
+                Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
 
