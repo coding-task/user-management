@@ -9,5 +9,7 @@ $ bin/docker.sh
 
 Now, the project can be accessed at http://0.0.0.0:8081/
 
+Please check the ER and UML diagrams in `diagrams` folder.
+
 For Api Docs, Please visit
 http://0.0.0.0:8081/docs/index.html
